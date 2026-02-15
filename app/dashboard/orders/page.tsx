@@ -1,26 +1,10 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/session';
-import { getDb } from '@/db';
-import { orders, clients, toppers } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { getOrders } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Cake, Cookie, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
-async function getOrders(userId: string) {
-  const db = getDb();
-  
-  const orderList = await db
-    .select()
-    .from(orders)
-    .leftJoin(clients, eq(orders.clientId, clients.id))
-    .leftJoin(toppers, eq(orders.id, toppers.orderId))
-    .where(eq(orders.userId, userId))
-    .orderBy(desc(orders.date));
-  
-  return orderList;
-}
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
