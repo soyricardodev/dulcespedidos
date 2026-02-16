@@ -4,16 +4,16 @@ import { Quicksand, Nunito } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
-const quicksand = Quicksand({ 
-  subsets: ["latin"], 
+const quicksand = Quicksand({
+  subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"]
+  weight: ["400", "500", "600", "700"],
 });
 
-const nunito = Nunito({ 
-  subsets: ["latin"], 
+const nunito = Nunito({
+  subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"]
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {

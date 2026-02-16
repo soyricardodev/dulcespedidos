@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string().optional(),
@@ -9,7 +9,7 @@ const envSchema = z.object({
   R2_BUCKET_NAME: z.string().optional(),
   R2_ACCOUNT_ID: z.string().optional(),
   R2_PUBLIC_URL: z.string().optional(),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
 export const env = envSchema.parse(process.env);

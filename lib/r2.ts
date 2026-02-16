@@ -1,14 +1,14 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
-import { env } from '@/lib/env';
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { env } from "@/lib/env";
 
 function getR2Client() {
   if (!env.R2_ACCOUNT_ID || !env.R2_ACCESS_KEY_ID || !env.R2_SECRET_ACCESS_KEY) {
     return null;
   }
-  
+
   return new S3Client({
-    region: 'auto',
+    region: "auto",
     endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     credentials: {
       accessKeyId: env.R2_ACCESS_KEY_ID,
@@ -20,13 +20,13 @@ function getR2Client() {
 export async function uploadToR2(
   file: Buffer,
   fileName: string,
-  contentType: string
+  contentType: string,
 ): Promise<string> {
   const client = getR2Client();
   if (!client || !env.R2_BUCKET_NAME || !env.R2_PUBLIC_URL) {
-    throw new Error('R2 not configured');
+    throw new Error("R2 not configured");
   }
-  
+
   const key = `toppers/${Date.now()}-${fileName}`;
 
   const upload = new Upload({
@@ -45,5 +45,5 @@ export async function uploadToR2(
 }
 
 export function getR2Url(key: string): string {
-  return `${env.R2_PUBLIC_URL || ''}/${key}`;
+  return `${env.R2_PUBLIC_URL || ""}/${key}`;
 }

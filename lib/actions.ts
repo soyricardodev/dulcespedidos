@@ -1,17 +1,17 @@
-'use server';
+"use server";
 
-import { revalidateTag, cacheLife, cacheTag } from 'next/cache';
-import { getDb } from '@/db';
-import { toppers, orders, clients, topperImages } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
-import { uploadToR2 } from '@/lib/r2';
+import { revalidateTag, cacheLife, cacheTag } from "next/cache";
+import { getDb } from "@/db";
+import { toppers, orders, clients, topperImages } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
+import { uploadToR2 } from "@/lib/r2";
 
 // Query functions with caching
 export async function getToppers() {
-  'use cache';
-  cacheLife('minutes');
-  cacheTag('toppers');
-  
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("toppers");
+
   const db = getDb();
   const topperList = await db
     .select()
@@ -27,15 +27,15 @@ export async function getToppers() {
         .select()
         .from(topperImages)
         .where(eq(topperImages.topperId, t.toppers.id));
-      return { 
-        ...t, 
-        images: images.map(img => ({
+      return {
+        ...t,
+        images: images.map((img) => ({
           id: img.id,
           imageUrl: img.imageUrl,
           description: img.description,
-        }))
+        })),
       };
-    })
+    }),
   );
 
   return toppersWithImages;
@@ -45,7 +45,7 @@ export async function getToppers() {
 export async function toggleTopperStatus(id: number, isReady: boolean) {
   const db = getDb();
   await db.update(toppers).set({ isReady: isReady }).where(eq(toppers.id, id));
-  revalidateTag('toppers');
+  revalidateTag("toppers", "max");
 }
 
 export async function createClient(data: {
@@ -56,15 +56,15 @@ export async function createClient(data: {
 }) {
   const db = getDb();
   const [newClient] = await db.insert(clients).values([data]).returning();
-  revalidateTag('clients');
+  revalidateTag("clients", "max");
   return newClient;
 }
 
 export async function getClients() {
-  'use cache';
-  cacheLife('minutes');
-  cacheTag('clients');
-  
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("clients");
+
   const db = getDb();
   const clientList = await db.select().from(clients).orderBy(clients.name);
   return clientList;
@@ -72,22 +72,25 @@ export async function getClients() {
 
 export async function createOrder(data: {
   clientId: number;
-  type: 'cake' | 'pasapalos';
+  type: "cake" | "pasapalos";
   description: string;
   date: string;
   time: string;
   totalAmount: number;
-  paymentStatus: 'pending' | 'paid' | 'partial';
+  paymentStatus: "pending" | "paid" | "partial";
   needsTopper: boolean;
   delegatedToNatalia: boolean;
   userId: string;
 }) {
   const db = getDb();
-  const [newOrder] = await db.insert(orders).values({
-    ...data,
-    date: new Date(data.date),
-  }).returning();
-  revalidateTag('orders');
+  const [newOrder] = await db
+    .insert(orders)
+    .values({
+      ...data,
+      date: new Date(data.date),
+    })
+    .returning();
+  revalidateTag("orders", "max");
   return newOrder;
 }
 
@@ -99,32 +102,31 @@ export async function createTopper(data: {
 }) {
   const db = getDb();
   const [newTopper] = await db.insert(toppers).values(data).returning();
-  revalidateTag('toppers');
+  revalidateTag("toppers", "max");
   return newTopper;
 }
 
-export async function uploadTopperImage(
-  topperId: number,
-  file: File,
-  description?: string
-) {
+export async function uploadTopperImage(topperId: number, file: File, description?: string) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const imageUrl = await uploadToR2(buffer, file.name, file.type);
 
   const db = getDb();
-  const [newImage] = await db.insert(topperImages).values({
-    topperId,
-    imageUrl,
-    description,
-  }).returning();
+  const [newImage] = await db
+    .insert(topperImages)
+    .values({
+      topperId,
+      imageUrl,
+      description,
+    })
+    .returning();
 
-  revalidateTag('toppers');
+  revalidateTag("toppers", "max");
   return newImage;
 }
 
 export async function getOrders(userId: string) {
-  'use cache';
-  
+  "use cache";
+
   const db = getDb();
   const orderList = await db
     .select()
@@ -133,6 +135,6 @@ export async function getOrders(userId: string) {
     .leftJoin(toppers, eq(orders.id, toppers.orderId))
     .where(eq(orders.userId, userId))
     .orderBy(desc(orders.date));
-  
+
   return orderList;
 }

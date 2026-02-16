@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useTransition } from 'react';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, Clock } from 'lucide-react';
-import { toggleTopperStatus } from '@/lib/actions';
+import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Clock } from "lucide-react";
+import { toggleTopperStatus } from "@/lib/actions";
 
 interface ToggleTopperButtonProps {
   id: number;
@@ -20,8 +20,8 @@ export function ToggleTopperButton({ id, isReady }: ToggleTopperButtonProps) {
   };
 
   return (
-    <Button 
-      size="sm" 
+    <Button
+      size="sm"
       variant={isReady ? "outline" : "default"}
       onClick={handleToggle}
       disabled={isPending}

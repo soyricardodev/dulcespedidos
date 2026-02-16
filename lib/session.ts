@@ -1,6 +1,6 @@
-import { auth } from '@/lib/auth';
-import { cookies } from 'next/headers';
-import { cache } from 'react';
+import { auth } from "@/lib/auth";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
 /**
  * Get the current session from the request cookies

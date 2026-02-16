@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useFormStatus } from 'react-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Loader2, Plus, Upload, X } from 'lucide-react';
-import { createOrderAction } from '@/app/dashboard/orders/new/actions';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Loader2, Plus, Upload, X } from "lucide-react";
+import { createOrderAction } from "@/app/dashboard/orders/new/actions";
 
 interface Client {
   id: number;
@@ -36,14 +42,16 @@ function SubmitButton() {
 export function OrderForm({ clients, userId }: OrderFormProps) {
   const router = useRouter();
   const [showNewClient, setShowNewClient] = useState(false);
-  const [newClientName, setNewClientName] = useState('');
-  const [newClientPhone, setNewClientPhone] = useState('');
-  const [newClientAddress, setNewClientAddress] = useState('');
-  
-  const [clientId, setClientId] = useState('');
+  const [newClientName, setNewClientName] = useState("");
+  const [newClientPhone, setNewClientPhone] = useState("");
+  const [newClientAddress, setNewClientAddress] = useState("");
+
+  const [clientId, setClientId] = useState("");
   const [needsTopper, setNeedsTopper] = useState(false);
   const [delegatedToNatalia, setDelegatedToNatalia] = useState(false);
-  const [topperImages, setTopperImages] = useState<{ file: File; preview: string; description: string }[]>([]);
+  const [topperImages, setTopperImages] = useState<
+    { file: File; preview: string; description: string }[]
+  >([]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -51,18 +59,16 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
 
     for (const file of Array.from(files)) {
       const preview = URL.createObjectURL(file);
-      setTopperImages(prev => [...prev, { file, preview, description: '' }]);
+      setTopperImages((prev) => [...prev, { file, preview, description: "" }]);
     }
   };
 
   const removeImage = (index: number) => {
-    setTopperImages(prev => prev.filter((_, i) => i !== index));
+    setTopperImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateImageDescription = (index: number, description: string) => {
-    setTopperImages(prev => prev.map((img, i) => 
-      i === index ? { ...img, description } : img
-    ));
+    setTopperImages((prev) => prev.map((img, i) => (i === index ? { ...img, description } : img)));
   };
 
   async function handleSubmit(formData: FormData) {
@@ -71,21 +77,21 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
       formData.append(`image_${index}`, img.file);
       formData.append(`image_${index}_description`, img.description);
     });
-    
+
     // Add userId
-    formData.append('userId', userId);
-    
+    formData.append("userId", userId);
+
     // If creating new client
     if (showNewClient && newClientName) {
-      formData.append('newClientName', newClientName);
-      formData.append('newClientPhone', newClientPhone);
-      formData.append('newClientAddress', newClientAddress);
+      formData.append("newClientName", newClientName);
+      formData.append("newClientPhone", newClientPhone);
+      formData.append("newClientAddress", newClientAddress);
     }
-    
+
     const result = await createOrderAction(formData);
-    
+
     if (result.success) {
-      router.push('/dashboard/orders');
+      router.push("/dashboard/orders");
     }
   }
 
@@ -103,16 +109,16 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
                   <SelectValue placeholder="Seleccionar cliente" />
                 </SelectTrigger>
                 <SelectContent>
-                  {clients.map(c => (
+                  {clients.map((c) => (
                     <SelectItem key={c.id} value={c.id.toString()}>
                       {c.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => setShowNewClient(true)}
                 className="w-full"
               >
@@ -126,7 +132,7 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
                 <Label>Nombre</Label>
                 <Input
                   value={newClientName}
-                  onChange={e => setNewClientName(e.target.value)}
+                  onChange={(e) => setNewClientName(e.target.value)}
                   placeholder="Nombre del cliente"
                   required
                 />
@@ -135,7 +141,7 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
                 <Label>Teléfono</Label>
                 <Input
                   value={newClientPhone}
-                  onChange={e => setNewClientPhone(e.target.value)}
+                  onChange={(e) => setNewClientPhone(e.target.value)}
                   placeholder="Teléfono"
                 />
               </div>
@@ -143,15 +149,11 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
                 <Label>Dirección</Label>
                 <Textarea
                   value={newClientAddress}
-                  onChange={e => setNewClientAddress(e.target.value)}
+                  onChange={(e) => setNewClientAddress(e.target.value)}
                   placeholder="Dirección"
                 />
               </div>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                onClick={() => setShowNewClient(false)}
-              >
+              <Button type="button" variant="ghost" onClick={() => setShowNewClient(false)}>
                 Cancelar
               </Button>
             </div>
@@ -179,42 +181,24 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
 
           <div className="space-y-2">
             <Label>Descripción</Label>
-            <Textarea
-              name="description"
-              placeholder="Describe el pedido..."
-              required
-            />
+            <Textarea name="description" placeholder="Describe el pedido..." required />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Fecha</Label>
-              <Input
-                name="date"
-                type="date"
-                required
-              />
+              <Input name="date" type="date" required />
             </div>
             <div className="space-y-2">
               <Label>Hora</Label>
-              <Input
-                name="time"
-                type="time"
-                required
-              />
+              <Input name="time" type="time" required />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Total ($)</Label>
-              <Input
-                name="totalAmount"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                required
-              />
+              <Input name="totalAmount" type="number" step="0.01" placeholder="0.00" required />
             </div>
             <div className="space-y-2">
               <Label>Pago</Label>
@@ -237,11 +221,7 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Topper</CardTitle>
-            <Switch
-              checked={needsTopper}
-              onCheckedChange={setNeedsTopper}
-              name="needsTopper"
-            />
+            <Switch checked={needsTopper} onCheckedChange={setNeedsTopper} name="needsTopper" />
           </div>
         </CardHeader>
         {needsTopper && (
@@ -257,20 +237,12 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
 
             <div className="space-y-2">
               <Label>Ocasión</Label>
-              <Input
-                name="topperOccasion"
-                placeholder="Ej: Anniversary, Birthday, etc."
-              />
+              <Input name="topperOccasion" placeholder="Ej: Anniversary, Birthday, etc." />
             </div>
 
             <div className="space-y-2">
               <Label>Precio (lo que le pagas a Natalia)</Label>
-              <Input
-                name="topperPrice"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-              />
+              <Input name="topperPrice" type="number" step="0.01" placeholder="0.00" />
             </div>
 
             <div className="space-y-2">
@@ -278,8 +250,8 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
               <div className="flex gap-2 flex-wrap">
                 {topperImages.map((img, i) => (
                   <div key={i} className="relative group">
-                    <img 
-                      src={img.preview} 
+                    <img
+                      src={img.preview}
                       alt={`Preview ${i}`}
                       className="w-20 h-20 object-cover rounded-lg"
                     />
@@ -292,7 +264,7 @@ export function OrderForm({ clients, userId }: OrderFormProps) {
                     </button>
                     <Input
                       value={img.description}
-                      onChange={e => updateImageDescription(i, e.target.value)}
+                      onChange={(e) => updateImageDescription(i, e.target.value)}
                       placeholder="Descripción"
                       className="mt-1 h-8 text-xs"
                     />

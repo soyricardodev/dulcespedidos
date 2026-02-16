@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
-import { ToppersList } from '@/components/toppers/list';
-import { ToppersSkeleton } from '@/components/toppers/skeleton';
+import { Suspense } from "react";
+import { ToppersList } from "@/components/toppers/list";
+import { ToppersSkeleton } from "@/components/toppers/skeleton";
 
 export default function ToppersPage() {
   return (
