@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Quicksand, Nunito } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { ToastProvider } from "@/components/toast-provider";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Providers>{children}</Providers>
         </Suspense>
+        <ToastProvider />
       </body>
     </html>
   );
